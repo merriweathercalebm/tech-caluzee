@@ -26,17 +26,17 @@
     </div>
   </header>
 
-  <div class="slogan">“ You break it, Caleb fixes it. ” - Walk-ins Welcome or Book Ahead</div>
+  <div class="slogan">“ You break it, Caleb fixes it. ” — Walk-ins Welcome or Book Ahead</div>
 
   <main>
     <div class="panel">
       <h2>Book a Repair Appointment</h2>
-      <p style="color:var(--muted); margin-bottom:1.4rem;">Confirm your details below and click the green button to send your exact phone model and price to Caleb on WhatsApp.</p>
+      <p style="color:var(--muted); margin-bottom:1.4rem;">Confirm your details below and tap the green button to open a direct WhatsApp chat with Caleb.</p>
 
       <div class="form-grid">
         <div class="form-group">
           <label>Full Name *</label>
-          <input type="text" id="custName" oninput="buildWhatsAppLink()" placeholder="e.g. Caleb Merriweather" required>
+          <input type="text" id="custName" oninput="buildWhatsAppLink()" placeholder="e.g. Thabo Modise" required>
         </div>
         <div class="form-group">
           <label>Your Phone / WhatsApp Number *</label>
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <a id="waSubmitBtn" href="https://wa.me" target="_blank" rel="noopener noreferrer" onclick="return validateForm()" class="btn" style="background:#25D366; font-size:1rem;">
+      <a id="waSubmitBtn" href="https://whatsapp.com" onclick="return validateForm()" class="btn" style="background:#25D366; font-size:1rem;">
         📲 Send Booking to Caleb on WhatsApp
       </a>
     </div>
@@ -90,7 +90,6 @@
     const deviceInput = document.getElementById('custDevice');
     const waBtn = document.getElementById('waSubmitBtn');
 
-    // Read service, device, and price passed from the model pages
     const params = new URLSearchParams(window.location.search);
     if (params.get('service')) serviceInput.value = params.get('service');
     if (params.get('price')) priceInput.value = params.get('price');
@@ -117,7 +116,8 @@
         `*Customer Name:* ${name} (${phone})\n` +
         `*Notes:* ${issue}`;
 
-      waBtn.href = `https://wa.me?text=${encodeURIComponent(message)}`;
+      // Direct API link opens the specific chat thread without showing the contact picker
+      waBtn.href = `https://whatsapp.com&text=${encodeURIComponent(message)}`;
     }
 
     function validateForm() {
