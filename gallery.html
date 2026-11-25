@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repair Work Gallery | Tech Caluzee Fix Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+    }
+    .photo-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .photo-card:target {
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 0 4px var(--cyan-light);
+    }
+    .photo-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      background: #07192D;
+    }
+    .photo-body {
+      padding: 1.25rem;
+    }
+    .photo-body h3 {
+      font-size: 1.08rem;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+    .photo-body p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔧</div>
+        <div>
+          <h1>TECH <span>CALUZEE</span></h1>
+          <p>Fix Solutions</p>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="prices.html">Price List</a></li>
+          <li><a href="gallery.html" class="active">Work Photos</a></li>
+          <li><a href="book.html">Book Repair</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="login.html" class="btn-nav">Login / Sign Up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="slogan">“ You break it, Caleb fixes it. ” — Real Repairs in Gaborone &amp; Molepolole</div>
+
+  <main>
+    <div style="margin-bottom: 1rem;">
+      <a href="index.html" style="color:var(--cyan); font-weight:700; text-decoration:none;">← Back to Home</a>
+    </div>
+
+    <div class="panel">
+      <div class="tag">Our Workbench &amp; Completed Repairs</div>
+      <h2>Photos of Services Being Made</h2>
+      <p style="color:var(--muted);">See how Caleb handles your phones and laptops with precision tools and tested parts.</p>
+
+      <div class="gallery-grid">
+        <div id="screens" class="photo-card">
+          <img src="images/screens.jpg" onerror="this.src='https://placehold.co'" alt="Cracked Screen Replacement">
+          <div class="photo-body">
+            <h3>1. Cracked Screen Replacement</h3>
+            <p>Careful removal of shattered displays, frame cleaning, and installation of tested OEM/OLED screens.</p>
+            <div class="card-links">
+              <a href="cracked-screens.html">View Screen Prices →</a>
+              <a href="book.html?service=Cracked+Screens">Book Repair</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="battery" class="photo-card">
+          <img src="images/battery.jpg" onerror="this.src='https://placehold.co'" alt="Battery Replacement">
+          <div class="photo-body">
+            <h3>2. Battery Replacement</h3>
+            <p>Safe removal of swollen or drained batteries and fitting of zero-cycle, full-day power cells.</p>
+            <div class="card-links">
+              <a href="battery-replacement.html">View Battery Prices →</a>
+              <a href="book.html?service=Battery+Replacement">Book Repair</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="charging" class="photo-card">
+          <img src="images/charging.jpg" onerror="this.src='https://placehold.co'" alt="Charging Port Repair">
+          <div class="photo-body">
+            <h3>3. Charging &amp; Power Fixes</h3>
+            <p>Micro-soldering USB-C/Lightning ports and replacing faulty charging boards for fast, reliable charging.</p>
+            <div class="card-links">
+              <a href="charging-power.html">View Charging Prices →</a>
+              <a href="book.html?service=Charging+%26+Power">Book Repair</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="water" class="photo-card">
+          <img src="images/water.jpg" onerror="this.src='https://placehold.co'" alt="Water Damage Recovery">
+          <div class="photo-body">
+            <h3>4. Water Damage Recovery</h3>
+            <p>Full motherboard disassembly, ultrasonic liquid cleaning, and corrosion treatment to revive wet devices.</p>
+            <div class="card-links">
+              <a href="water-damage.html">View Water Prices →</a>
+              <a href="book.html?service=Water+Damage">Book Repair</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="software" class="photo-card">
+          <img src="images/software.jpg" onerror="this.src='https://placehold.co'" alt="Software & Virus Removal">
+          <div class="photo-body">
+            <h3>5. Software &amp; Virus Cleanup</h3>
+            <p>Fresh Windows/macOS installs, malware removal, and phone software flashing to fix bootloops.</p>
+            <div class="card-links">
+              <a href="software-virus.html">View Software Prices →</a>
+              <a href="book.html?service=Software+%26+Virus">Book Service</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="data" class="photo-card">
+          <img src="images/data.jpg" onerror="this.src='https://placehold.co'" alt="Data Recovery">
+          <div class="photo-body">
+            <h3>6. Data Recovery</h3>
+            <p>Rescuing family photos, school/work documents, and contacts from broken phones and hard drives.</p>
+            <div class="card-links">
+              <a href="data-recovery.html">View Recovery Prices →</a>
+              <a href="book.html?service=Data+Recovery">Book Service</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="hardware" class="photo-card">
+          <img src="images/hardware.jpg" onerror="this.src='https://placehold.co'" alt="Laptop Hardware">
+          <div class="photo-body">
+            <h3>7. Laptop Hardware &amp; Upgrades</h3>
+            <p>Keyboard replacements, broken hinge rebuilds, fan dust cleaning, and high-speed SSD upgrades.</p>
+            <div class="card-links">
+              <a href="laptop-hardware.html">View Hardware Prices →</a>
+              <a href="book.html?service=Laptop+Hardware">Book Repair</a>
+            </div>
+          </div>
+        </div>
+
+        <div id="diagnostics" class="photo-card">
+          <img src="images/diagnostics.jpg" onerror="this.src='https://placehold.co'" alt="Free Diagnostics">
+          <div class="photo-body">
+            <h3>8. Free Diagnostics</h3>
+            <p>Complete voltage, battery health, and component inspection before giving you an upfront quote.</p>
+            <div class="card-links">
+              <a href="prices.html#diagnostics">View Details →</a>
+              <a href="book.html?service=Free+Diagnostics">Book Free Check</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="foot-bottom">
+      <span>TECH CALUZEE FIX SOLUTIONS • GABORONE &amp; MOLEPOLOLE, BOTSWANA</span>
+      <span style="color:var(--cyan); font-weight:700;">You break it, Caleb fixes it.</span>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Repair | Tech Caluzee Fix Solutions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔧</div>
+        <div><h1>TECH <span>CALUZEE</span></h1><p>Fix Solutions</p></div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="prices.html">Price List</a></li>
+          <li><a href="book.html" class="active">Book Repair</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="login.html" class="btn-nav">Login / Sign Up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="slogan">“ You break it, Caleb fixes it. ” - Walk-ins Welcome or Book Ahead</div>
+
+  <main>
+    <div class="panel">
+      <h2>Book a Repair Appointment</h2>
+      <p style="color:var(--muted); margin-bottom:1.4rem;">Confirm your details below and click the green button to send your exact phone model and price to Caleb on WhatsApp.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="custName" oninput="buildWhatsAppLink()" placeholder="e.g. Caleb Merriweather" required>
+        </div>
+        <div class="form-group">
+          <label>Your Phone / WhatsApp Number *</label>
+          <input type="tel" id="custPhone" oninput="buildWhatsAppLink()" placeholder="+267 7X XXX XXX" required>
+        </div>
+        <div class="form-group">
+          <label>Preferred Location *</label>
+          <select id="custLocation" onchange="buildWhatsAppLink()">
+            <option value="Gaborone">Gaborone</option>
+            <option value="Molepolole">Molepolole</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Exact Service Wanted *</label>
+          <input type="text" id="serviceText" oninput="buildWhatsAppLink()" value="Free Diagnostics" required>
+        </div>
+        <div class="form-group">
+          <label>Estimated Service Price (BWP)</label>
+          <input type="text" id="servicePrice" oninput="buildWhatsAppLink()" value="FREE (P0)" style="background:#E6F6FD; font-weight:700; color:#07192D;">
+        </div>
+        <div class="form-group">
+          <label>Device Brand &amp; Model *</label>
+          <input type="text" id="custDevice" oninput="buildWhatsAppLink()" placeholder="e.g. Samsung Galaxy A15 / iPhone 11" required>
+        </div>
+        <div class="form-group full">
+          <label>Preferred Date &amp; Time *</label>
+          <input type="datetime-local" id="custDate" onchange="buildWhatsAppLink()">
+        </div>
+        <div class="form-group full">
+          <label>Describe the Fault</label>
+          <textarea id="custIssue" rows="3" oninput="buildWhatsAppLink()" placeholder="Tell us any extra details..."></textarea>
+        </div>
+      </div>
+
+      <a id="waSubmitBtn" href="https://wa.me" target="_blank" rel="noopener noreferrer" onclick="return validateForm()" class="btn" style="background:#25D366; font-size:1rem;">
+        📲 Send Booking to Caleb on WhatsApp
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="foot-bottom">
+      <span>TECH CALUZEE FIX SOLUTIONS • GABORONE &amp; MOLEPOLOLE, BOTSWANA</span>
+      <span style="color:var(--cyan); font-weight:700;">You break it, Caleb fixes it.</span>
+    </div>
+  </footer>
+
+  <script>
+    const serviceInput = document.getElementById('serviceText');
+    const priceInput = document.getElementById('servicePrice');
+    const deviceInput = document.getElementById('custDevice');
+    const waBtn = document.getElementById('waSubmitBtn');
+
+    // Read service, device, and price passed from the model pages
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('service')) serviceInput.value = params.get('service');
+    if (params.get('price')) priceInput.value = params.get('price');
+    if (params.get('device')) deviceInput.value = params.get('device');
+
+    function buildWhatsAppLink() {
+      const name = document.getElementById('custName').value.trim() || 'Customer';
+      const phone = document.getElementById('custPhone').value.trim() || 'Not provided';
+      const location = document.getElementById('custLocation').value;
+      const service = serviceInput.value.trim();
+      const price = priceInput.value.trim();
+      const device = deviceInput.value.trim() || 'Not specified';
+      const dateRaw = document.getElementById('custDate').value;
+      const dateFormatted = dateRaw ? dateRaw.replace('T', ' at ') : 'Flexible';
+      const issue = document.getElementById('custIssue').value.trim() || 'None';
+
+      const message =
+        `Hello Tech Caluzee Fix Solutions! I would like to book a repair:\n\n` +
+        `*Service Wanted:* ${service}\n` +
+        `*Price:* ${price}\n` +
+        `*Phone/Device:* ${device}\n` +
+        `*Location:* ${location}\n` +
+        `*Preferred Date/Time:* ${dateFormatted}\n` +
+        `*Customer Name:* ${name} (${phone})\n` +
+        `*Notes:* ${issue}`;
+
+      waBtn.href = `https://wa.me?text=${encodeURIComponent(message)}`;
+    }
+
+    function validateForm() {
+      if (!document.getElementById('custName').value.trim() || !document.getElementById('custPhone').value.trim() || !deviceInput.value.trim()) {
+        alert('Please enter your Name, Phone Number, and Device Model before sending.');
+        return false;
+      }
+      buildWhatsAppLink();
+      return true;
+    }
+
+    buildWhatsAppLink();
+  </script>
+
+</body>
+</html>
