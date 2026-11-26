@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard | Tech Caluzee Fix Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dash-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .loyalty-card { background: rgba(0, 229, 255, 0.08); border: 1px solid var(--cyan); border-radius: 10px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    .progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin: 0.8rem 0; }
+    .progress-fill { height: 100%; background: var(--cyan); width: 0%; transition: width 0.4s ease; }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 1rem; text-align: left; }
+    .history-table th, .history-table td { padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .badge { padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.85rem; font-weight: bold; background: rgba(0,229,255,0.15); color: var(--cyan); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">🔧</div>
+        <div>
+          <h1>TECH <span>CALUZEE</span></h1>
+          <p>Fix Solutions</p>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="prices.html">Price List</a></li>
+          <li><a href="book.html">Book Repair</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#" onclick="handleLogout(event)" class="btn-nav active">Log Out</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="slogan">“ You break it, Caleb fixes it. ” - Customer Loyalty Portal</div>
+
+  <main>
+    <div class="panel" style="max-width: 900px; margin: 2rem auto;">
+      <div class="dash-header">
+        <div>
+          <h2 id="welcomeName">Welcome back!</h2>
+          <p id="userDetails" style="opacity: 0.8; font-size: 0.9rem;">Loading your profile...</p>
+        </div>
+        <a href="book.html" class="btn">+ Book New Repair</a>
+      </div>
+
+      <!-- Loyalty Discount Tracker -->
+      <div class="loyalty-card">
+        <h3 style="margin-bottom: 0.3rem;">🎁 Tech Caluzee Loyalty Rewards</h3>
+        <p id="loyaltyStatus">Checking your repair history...</p>
+        <div class="progress-bar">
+          <div id="loyaltyProgress" class="progress-fill"></div>
+        </div>
+        <small style="opacity: 0.75;">Complete 3 repairs with Tech Caluzee to unlock a <strong>15% discount</strong> on your next service!</small>
+      </div>
+
+      <!-- Service History -->
+      <h3>Your Service &amp; Repair History</h3>
+      <div style="overflow-x: auto;">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Device</th>
+              <th>Service / Issue</th>
+              <th>Cost (BWP)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="repairsBody">
+            <tr><td colspan="5">Loading repair history...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="foot-bottom">
+      <span>TECH CALUZEE FIX SOLUTIONS • GABORONE &amp; MOLEPOLOLE, BOTSWANA</span>
+      <span style="color:var(--cyan); font-weight:700;">You break it, Caleb fixes it.</span>
+    </div>
+  </footer>
+
+  <script src="https://jsdelivr.net"></script>
+
+  <script>
+    const SUPABASE_URL = "https://supabase.co";
+    const SUPABASE_KEY = "PASTE_YOUR_FULL_SB_PUBLISHABLE_KEY_HERE"; // <-- Paste your full publishable key here!
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const REPAIRS_FOR_DISCOUNT = 3; // Number of repairs needed for a discount
+
+    async function loadDashboard() {
+      // 1. Check if user is logged in
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const user = session.user;
+      const fullName = user.user_metadata?.full_name || "Valued Customer";
+      const phone = user.user_metadata?.whatsapp_number || "No phone saved";
+
+      document.getElementById('welcomeName').textContent = `Welcome, ${fullName}!`;
+      document.getElementById('userDetails').textContent = `${user.email} • WhatsApp: ${phone}`;
+
+      // 2. Fetch this customer's repair history from Supabase
+      const { data: repairs, error } = await supabaseClient
+        .from('repairs')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      const tbody = document.getElementById('repairsBody');
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="5">Error loading history: ${error.message}</td></tr>`;
+        return;
+      }
+
+      if (!repairs || repairs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5">No repairs recorded yet. Book your first repair to start earning loyalty discounts!</td></tr>`;
+        updateLoyaltyUI(0);
+        return;
+      }
+
+      // 3. Render repair rows & count completed repairs
+      let completedCount = 0;
+      tbody.innerHTML = repairs.map(item => {
+        if (item.status && item.status.toLowerCase() === 'completed') {
+          completedCount++;
+        }
+        const date = new Date(item.created_at).toLocaleDateString('en-GB');
+        const cost = item.price ? `P ${item.price}` : 'Quote Pending';
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>${item.device_name}</td>
+            <td>${item.service_type}</td>
+            <td>${cost}</td>
+            <td><span class="badge">${item.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      updateLoyaltyUI(completedCount);
+    }
+
+    function updateLoyaltyUI(completedCount) {
+      const statusEl = document.getElementById('loyaltyStatus');
+      const barEl = document.getElementById('loyaltyProgress');
+      const remainder = completedCount % REPAIRS_FOR_DISCOUNT;
+
+      if (completedCount > 0 && remainder === 0) {
+        statusEl.innerHTML = `🎉 <strong>CONGRATULATIONS!</strong> You have completed ${completedCount} repairs and unlocked a <strong>15% Loyalty Discount</strong> on your next repair! Mention your email when booking.`;
+        barEl.style.width = "100%";
+      } else {
+        const needed = REPAIRS_FOR_DISCOUNT - remainder;
+        const percent = (remainder / REPAIRS_FOR_DISCOUNT) * 100;
+        statusEl.innerHTML = `You have completed <strong>${completedCount}</strong> repair(s). Complete <strong>${needed} more</strong> to unlock your 15% discount!`;
+        barEl.style.width = `${percent}%`;
+      }
+    }
+
+    async function handleLogout(e) {
+      e.preventDefault();
+      await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    }
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>

@@ -40,36 +40,36 @@
 
       <div id="authAlert" class="alert"></div>
 
-      <form id="loginForm" onsubmit="submitAuth(event, 'Logged in')">
+      <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label>Email or Phone Number *</label>
-          <input type="text" required placeholder="Enter email or +267...">
+          <label>Email Address *</label>
+          <input type="email" id="loginEmail" required placeholder="you@example.com">
         </div>
         <div class="form-group">
           <label>Password *</label>
-          <input type="password" required placeholder="Password">
+          <input type="password" id="loginPassword" required placeholder="Password">
         </div>
-        <button type="submit" class="btn" style="width:100%;">Login to Account</button>
+        <button type="submit" id="loginBtn" class="btn" style="width:100%;">Login to Account</button>
       </form>
 
-      <form id="signupForm" style="display:none;" onsubmit="submitAuth(event, 'Account created')">
+      <form id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
         <div class="form-group">
           <label>Full Name *</label>
-          <input type="text" required placeholder="Your full name">
+          <input type="text" id="signupName" required placeholder="Your full name">
         </div>
         <div class="form-group">
           <label>Email Address *</label>
-          <input type="email" required placeholder="you@example.com">
+          <input type="email" id="signupEmail" required placeholder="you@example.com">
         </div>
         <div class="form-group">
           <label>WhatsApp Number *</label>
-          <input type="tel" required placeholder="+267 7X XXX XXX">
+          <input type="tel" id="signupPhone" required placeholder="+267 7X XXX XXX">
         </div>
         <div class="form-group">
           <label>Create Password *</label>
-          <input type="password" required placeholder="Create a password">
+          <input type="password" id="signupPassword" required minlength="6" placeholder="Min. 6 characters">
         </div>
-        <button type="submit" class="btn" style="width:100%;">Create Account</button>
+        <button type="submit" id="signupBtn" class="btn" style="width:100%;">Create Account</button>
       </form>
     </div>
   </main>
@@ -106,7 +106,21 @@
     </div>
   </footer>
 
+  <!-- Load Supabase -->
+  <script src="https://jsdelivr.net"></script>
+
   <script>
+    const SUPABASE_URL = "https://supabase.co";
+    const SUPABASE_KEY = "PASTE_YOUR_FULL_SB_PUBLISHABLE_KEY_HERE"; // <-- Paste your full publishable key here!
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function showAlert(message, isError = false) {
+      const box = document.getElementById('authAlert');
+      box.textContent = (isError ? '❌ ' : '✅ ') + message;
+      box.style.display = 'block';
+      box.style.borderColor = isError ? '#ff4d4d' : 'var(--cyan)';
+    }
+
     function switchForm(mode) {
       document.getElementById('authAlert').style.display = 'none';
       document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
@@ -115,11 +129,71 @@
       document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
     }
 
-    function submitAuth(e, status) {
+    async function handleSignup(e) {
       e.preventDefault();
-      const box = document.getElementById('authAlert');
-      box.textContent = '✅ ' + status + ' successfully!';
-      box.style.display = 'block';
+      const btn = document.getElementById('signupBtn');
+      btn.disabled = true;
+      btn.textContent = "Creating Account...";
+
+      const fullName = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      // Redirects back to login.html after they click the email confirmation link
+      const redirectUrl = window.location.origin + window.location.pathname;
+
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            whatsapp_number: phone
+          }
+        }
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Create Account";
+
+      if (error) {
+        showAlert(error.message, true);
+      } else {
+        document.getElementById('signupForm').reset();
+        // 1. Switch automatically to the Login tab
+        switchForm('login');
+        // 2. Pre-fill their email on the Login tab so it's ready
+        document.getElementById('loginEmail').value = email;
+        // 3. Tell them to confirm their email first
+        showAlert("Account created! Check your email inbox (and spam folder) to confirm your account, then log in below.");
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Login to Account";
+
+      if (error) {
+        showAlert(error.message, true);
+      } else {
+        // Redirect to dashboard.html on successful login
+        window.location.href = "dashboard.html";
+      }
     }
   </script>
 
